@@ -7,9 +7,17 @@ class ProducerRunnable implements Runnable{
     }
     public void run(){
 
-        for(int i = 0; i < 10; i++) {
+        while(true) {
             double number = Math.floor(Math.random() * 100);
             synchronized (numbers) {
+                if(numbers.size() >= 10){
+                    System.out.println("List is full!! you can't produce");
+                    try {
+                        numbers.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
                 numbers.addLast(number);
                 numbers.notifyAll();
             }
@@ -30,9 +38,10 @@ class ConsumerRunnable implements Runnable{
     }
     public void run(){
         double number;
-        for(int i = 0; i < 10; i++) {
+        while (true){
             synchronized (numbers) {
                 if (numbers.size() == 0) {
+                    System.out.println("List is empty you can't consume");
                     try {
                         numbers.wait();
                     } catch (InterruptedException e) {
@@ -41,6 +50,7 @@ class ConsumerRunnable implements Runnable{
 
                 }
                 number = numbers.removeFirst();
+                numbers.notifyAll();
                 System.out.println("consumed value is " + number);
 
             }
@@ -57,8 +67,6 @@ public class ProducerConsumerTester {
 
         LinkedList<Double> numbers = new LinkedList<>();
 
-
-
         Runnable producerRunnable = new ProducerRunnable(numbers);
         Runnable consumerRunnable = new ConsumerRunnable(numbers);
 
@@ -67,6 +75,9 @@ public class ProducerConsumerTester {
 
         thread.start();
         thread1.start();
+
+        thread.sleep(2000);
+        thread1.sleep(2000);
 
         thread.join();
         thread1.join();
