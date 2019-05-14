@@ -1,3 +1,5 @@
+package bank;
+
 class DepositRunnableSynchronized implements Runnable{
 
     private BankAccount bankAccount;

@@ -1,33 +1,8 @@
+package producerconsumer;
+
 import java.util.LinkedList;
 
-class ProducerRunnable implements Runnable{
-    LinkedList<Double> numbers ;
-    public ProducerRunnable(LinkedList<Double> numbers){
-        this.numbers = numbers;
-    }
-    public void run(){
-
-        while(true) {
-            double number = Math.floor(Math.random() * 100);
-            synchronized (numbers) {
-                if(numbers.size() >= 10){
-                    System.out.println("List is full!! you can't produce");
-                    try {
-                        numbers.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                numbers.addLast(number);
-                numbers.notifyAll();
-            }
-
-            System.out.println("produced value is " + number);
-
-        }
-
-    }
-}
+import static java.lang.Thread.sleep;
 
 
 class ConsumerRunnable implements Runnable{
@@ -39,6 +14,11 @@ class ConsumerRunnable implements Runnable{
     public void run(){
         double number;
         while (true){
+            try {
+                sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             synchronized (numbers) {
                 if (numbers.size() == 0) {
                     System.out.println("List is empty you can't consume");
@@ -75,9 +55,6 @@ public class ProducerConsumerTester {
 
         thread.start();
         thread1.start();
-
-        thread.sleep(2000);
-        thread1.sleep(2000);
 
         thread.join();
         thread1.join();

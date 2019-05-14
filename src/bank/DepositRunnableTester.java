@@ -1,3 +1,5 @@
+package bank;
+
 class DepositRunnable implements Runnable{
 
     private BankAccount bankAccount;

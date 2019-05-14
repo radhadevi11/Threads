@@ -1,3 +1,5 @@
+package example;
+
 class MyRunnable implements Runnable{
 
     private int n;
